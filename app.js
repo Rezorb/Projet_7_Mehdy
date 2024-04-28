@@ -1,16 +1,19 @@
 const express = require("express");
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
+// Routes PATH  //
 const booksRoutes = require("./routes/booksRoute");
 const usersRoutes = require("./routes/usersRoute");
 
-const app = express();
 
-mongoose.connect('mongodb+srv://MdyServer:kEiVUqlMemZsASnB@cluster0-pme76.mongodb.net/test?retryWrites=true&w=majority',
-  { useNewUrlParser: true,
-    useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
-  .catch(() => console.log('Connexion à MongoDB échouée !'));
+mongoose.connect(
+    "mongodb+srv://MdySrv:LRMlMqrQ7cfw5x4a@mon-vieux-grimoire.mjvxrap.mongodb.net/?retryWrites=true&w=majority&appName=Mon-vieux-grimoire",
+    { useNewUrlParser: true, useUnifiedTopology: true }
+  )
+  .then(() => console.log("Connexion à MongoDB réussie !"))
+  .catch(() => console.log("Connexion à MongoDB échouée !"));
+
+const app = express();
 
 // Middleware permettant d'intercepter les requêtes JSON //
 app.use(express.json());
