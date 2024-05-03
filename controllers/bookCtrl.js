@@ -1,30 +1,68 @@
-const Book = require('../models/Book')
+const Book = require('../models/Book');
+const fs = require('fs');
 
 exports.createBook = (req, res, next) => {
-    delete req.body._id;
-    delete req.body._userId;
-
+    // Stockage de la requête sous forme de JSON dans une constante (requête sous la forme form-data à l'origine)
+    const bookObject = JSON.parse(req.body.book);
+    // Suppression du faux _id envoyé par le front
+    delete bookObject._id;
+    // Suppression de _userId auquel on ne peut faire confiance
+    delete bookObject._userId;
+    // Création d'une instance du modèle Book
     const book = new Book({
-      ...req.body
+        ...bookObject,
+        userId: req.auth.userId,
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`,
+        averageRating: bookObject.ratings[0].grade
     });
+    // Enregistrement dans la base de données
     book.save()
-      .then(() => res.status(201).json({ message: "Objet enregistré !" }))
-      .catch((error) => res.status(400).json({ error }));
-  }
+        .then(() => { res.status(201).json({ message: 'Objet enregistré !' })})
+        .catch(error => { res.status(400).json( { error }) })
+};
 
 exports.modifyBook = (req, res, next) => {
-    Book.updateOne({ _id: req.params.id }, {...req.body, _id: req.params.id})
-        .then(book => res.status(200).json({ message: 'Objet modifié !'}))
-        .catch(error => res.status(404).json({ error }));
-    }
+    const bookObject = req.file ? {
+        ...JSON.parse(req.body.book),
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+    } : { ...req.body };
+  
+    delete bookObject._userId;
+    Book.findOne({_id: req.params.id})
+        .then((book) => {
+            if (book.userId != req.auth.userId) {
+                res.status(403).json({ message : 'Unauthorized request'});
+            } else {
+                Book.updateOne({ _id: req.params.id}, { ...bookObject, _id: req.params.id})
+                .then(() => res.status(200).json({message : 'Objet modifié!'}))
+                .catch(error => res.status(401).json({ error }));
+            }
+        })
+        .catch((error) => {
+            res.status(400).json({ error });
+        });
+ };
 
-exports.deleteBook = (req, res, next) => {
-    Book.deleteOne({ _id: req.params.id })
-        .then(book => res.status(200).json(book))
-        .catch(error => res.status(404).json({ message: 'Objet supprimé !'}));
-    }
+ exports.deleteBook = (req, res, next) => {
+    Book.findOne({ _id: req.params.id})
+        .then(book => {
+            if (book.userId != req.auth.userId) {
+                res.status(403).json({message: 'Unauthorized request'});
+            } else {
+                const filename = book.imageUrl.split('/images/')[1];
+                fs.unlink(`images/${filename}`, () => {
+                    Book.deleteOne({_id: req.params.id})
+                        .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
+                        .catch(error => res.status(401).json({ error }));
+                });
+            }
+        })
+        .catch( error => {
+            res.status(500).json({ error });
+        });
+ };
 
-exports.get0neBook = (req, res, next) => {
+exports.getOneBook = (req, res, next) => {
     Book.findOne({ _id: req.params.id })
         .then(book => res.status(200).json(book))
         .catch(error => res.status(404).json({ error }));
@@ -34,4 +72,14 @@ exports.getAllBooks = (req, res, next) => {
     Book.find()
         .then((books) => res.status(200).json(books))
         .catch((error) => res.status(400).json({ error }));
+    }
+
+// Notation des livres par les utilisateurs //
+
+exports.giveRating = (req, res, next) => {
+    Book.findOne({ _id:req.auth.userId})
+        .then(book => {
+            
+        })
+        .catch()
     }
