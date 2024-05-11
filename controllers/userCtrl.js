@@ -41,3 +41,12 @@ exports.login = (req, res, next) => {
     })
     .catch(error => res.status(500).json({ error }));
 };
+
+// exports.getEmails = (req, res) => {
+//     User.find({}, 'email').then(users => {
+//         const emails = users.map(user => user.email);
+//         res.json(emails);
+//     }).catch(err => {
+//         res.status(500).send({ error: 'Erreur lors de la récupération des données' });
+//     });
+// };
