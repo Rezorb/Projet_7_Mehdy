@@ -13,7 +13,7 @@ const compressImg = (req, res, next) => {
       .webp({ quality: 80 })
       .toFile(newFile)
       .then(() => {
-        // Supprimer le fichier original après la conversion
+        // Delete the original file after conversion.
         fs.unlink(filePath, (err) => {
           if (err) {
             console.error("Erreur lors de la suppression de l'image", err);
@@ -21,11 +21,11 @@ const compressImg = (req, res, next) => {
             console.log("Ancienne image supprimée avec succes !");
           }
         });
-
+        // Update the filename in the request object.
         req.file.filename = newFileName;
         next();
       })
-      .catch(err => {
+      .catch((err) => {
         console.error("Erreur lors de la compression de l'image", err);
         next(err);
       });
