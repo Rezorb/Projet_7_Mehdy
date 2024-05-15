@@ -11,8 +11,8 @@ mongoose
     "mongodb+srv://MdySrv:LRMlMqrQ7cfw5x4a@mon-vieux-grimoire.mjvxrap.mongodb.net/?retryWrites=true&w=majority&appName=Mon-vieux-grimoire",
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
-  .then(() => console.log("Connexion à MongoDB réussie !"))
-  .catch(() => console.log("Connexion à MongoDB échouée !"));
+  .then(() => console.log("Successful connection to MongoDB !"))
+  .catch(() => console.log("MongoDB connection failed !"));
 
 const app = express();
 
@@ -33,11 +33,11 @@ app.use((req, res, next) => {
   next();
 });
 
-// Routes //
+// Routes.
 app.use("/api/books", booksRoutes);
 app.use("/api/auth", usersRoutes);
 
-// Images statiques //
+// Images statiques.
 app.use("/images", express.static(path.join(__dirname, "images")));
 
 module.exports = app;

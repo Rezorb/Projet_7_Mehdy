@@ -17,7 +17,7 @@ exports.signup = (req, res, next) => {
       // User registration in the database.
       user
         .save()
-        .then(() => res.status(201).json({ message: "Utilisateur créé !" }))
+        .then(() => res.status(201).json({ message: "User created !" }))
         .catch((error) => res.status(400).json({ error }));
     })
     .catch((error) => res.status(500).json({ error }));
@@ -29,7 +29,7 @@ exports.login = (req, res, next) => {
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
-        return res.status(401).json({ message: "Utilisateur non trouvé !" });
+        return res.status(401).json({ message: "User not found !" });
       }
       // Comparison of the password sent with the password hashed in the database
       bcrypt
@@ -38,7 +38,7 @@ exports.login = (req, res, next) => {
           if (!valid) {
             return res
               .status(401)
-              .json({ message: "Mot de passe incorrect !" });
+              .json({ message: "Wrong password !" });
           }
           // If the password is correct, generate a JWT token.
           res.status(200).json({
@@ -54,12 +54,3 @@ exports.login = (req, res, next) => {
     })
     .catch((error) => res.status(500).json({ error }));
 };
-
-// exports.getEmails = (req, res) => {
-//     User.find({}, 'email').then(users => {
-//         const emails = users.map(user => user.email);
-//         res.json(emails);
-//     }).catch(err => {
-//         res.status(500).send({ error: 'Erreur lors de la récupération des données' });
-//     });
-// };
