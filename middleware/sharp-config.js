@@ -25,9 +25,8 @@ const compressImg = (req, res, next) => {
             console.log("Old image successfully deleted!");
           }
         });
-        // Update the filename in the request object.
-        req.file.filename = newFileName;
-        req.file.path = newFile; // Met à jour également le chemin du fichier
+        req.file.filename = newFileName; // Update the filename in the request object.
+        req.file.path = newFile; // Also updates the file path.
         next();
       })
       .catch((err) => {
