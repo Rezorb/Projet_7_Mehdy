@@ -6,7 +6,7 @@ module.exports = (req, res, next) => {
     // Retrieve the JWT token from the request headers.
     const token = req.headers.authorization.split(" ")[1];
     // Verify and decode the JWT token.
-    const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
+    const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
     // Extract the user ID from the decoded token.
     const userId = decodedToken.userId;
     // Add the user ID to the request object for later use.
@@ -18,3 +18,4 @@ module.exports = (req, res, next) => {
     res.status(401).json({ error });
   }
 };
+console.log(process.env)

@@ -1,3 +1,6 @@
+require('dotenv').config()
+
+
 const express = require("express");
 const mongoose = require("mongoose");
 
@@ -5,11 +8,10 @@ const booksRoutes = require("./routes/booksRoute");
 const usersRoutes = require("./routes/usersRoute");
 const path = require("path");
 
+
 // Connect to MongoDB using Mongoose.
 mongoose
-  .connect(
-    "mongodb+srv://MdySrv:LRMlMqrQ7cfw5x4a@mon-vieux-grimoire.mjvxrap.mongodb.net/?retryWrites=true&w=majority&appName=Mon-vieux-grimoire",
-    { useNewUrlParser: true, useUnifiedTopology: true }
+  .connect(process.env.MONGO_SERV, { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => console.log("Successful connection to MongoDB !"))
   .catch(() => console.log("MongoDB connection failed !"));

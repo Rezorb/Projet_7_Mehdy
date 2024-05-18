@@ -46,13 +46,17 @@ exports.modifyBook = (req, res, next) => {
       if (book.userId != req.auth.userId) {
         res.status(403).json({ message: "Unauthorized request" });
       } else {
-        // Update book in database.
-        Book.updateOne(
-          { _id: req.params.id },
-          { ...bookObject, _id: req.params.id }
-        )
-          .then(() => res.status(200).json({ message: "Modified item !" }))
-          .catch((error) => res.status(401).json({ error }));
+        // Retrieving the name of the old image.
+        const oldFile = book.imageUrl.split('/images/')[1];
+        fs.unlink(`images/${oldFile}`, () => {
+          // Update book in database.
+          Book.updateOne(
+            { _id: req.params.id },
+            { ...bookObject, _id: req.params.id }
+          )
+            .then(() => res.status(200).json({ message: "Modified item !" }))
+            .catch((error) => res.status(401).json({ error }));
+        });
       }
     })
     .catch((error) => {

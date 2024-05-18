@@ -16,6 +16,7 @@ const compressImg = (req, res, next) => {
         fs.unlink(filePath, () => {
           req.file.path = newFile; // Updates the file path.
           req.file.filename = newFileName; // Also updates the file name.
+          res.setHeader('Cache-Control', 'no-store');
           next();
         });
       })
