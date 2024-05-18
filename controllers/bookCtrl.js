@@ -48,6 +48,7 @@ exports.modifyBook = (req, res, next) => {
       } else {
         // Retrieving the name of the old image.
         const oldFile = book.imageUrl.split('/images/')[1];
+        // Unlink the old image.
         fs.unlink(`images/${oldFile}`, () => {
           // Update book in database.
           Book.updateOne(
