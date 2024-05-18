@@ -23,15 +23,15 @@ exports.signup = (req, res, next) => {
     .catch((error) => res.status(500).json({ error }));
 };
 
-// User login management
+// User login management.
 exports.login = (req, res, next) => {
-  // Search for user in email database
+  // Search for user in email database.
   User.findOne({ email: req.body.email })
     .then((user) => {
       if (!user) {
         return res.status(401).json({ message: "User not found !" });
       }
-      // Comparison of the password sent with the password hashed in the database
+      // Comparison of the password sent with the password hashed in the database.
       bcrypt
         .compare(req.body.password, user.password)
         .then((valid) => {

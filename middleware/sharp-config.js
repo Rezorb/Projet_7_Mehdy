@@ -8,31 +8,18 @@ const compressImg = (req, res, next) => {
     const newFileName = req.file.filename.replace(/\.[^.]+$/, ".webp");
     const newFile = path.join("images", newFileName);
 
-    console.log(`Starting image compression for file: ${filePath}`);
-
     sharp(filePath)
       .resize({ width: 254, height: 364 })
       .webp({ quality: 80 })
       .toFile(newFile)
       .then(() => {
-        console.log(`Image successfully compressed to: ${newFile}`);
-        // Delete the original file after conversion.
-        console.log(`Attempting to delete the original file: ${filePath}`);
-        fs.unlink(filePath, (err) => {
-          if (err) {
-            console.error("Error deleting image", err);
-          } else {
-            console.log("Old image successfully deleted!");
-          }
+        fs.unlink(filePath, () => {
+          req.file.path = newFile; // Updates the file path.
+          req.file.filename = newFileName; // Also updates the file name.
+          next();
         });
-        req.file.filename = newFileName; // Update the filename in the request object.
-        req.file.path = newFile; // Also updates the file path.
-        next();
       })
-      .catch((err) => {
-        console.error("Error during image compression", err);
-        next(err);
-      });
+      .catch((error) => res.status(401).json({ error }));
   } else {
     next();
   }
